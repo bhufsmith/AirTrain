@@ -11,7 +11,7 @@ interface MessageService {
      * Registers a user with the message service
      * That process includes generating a secret for sender validation
      */
-    fun registerUser(): MessengerUser
+    fun registerUser(name: String): SimpleMessengerUser
 
     /**
      * This function will send a message to a receiver from a sender.

@@ -1,32 +1,23 @@
 package me.bhufsmith.airtrain.messenger
 
-import java.util.*
+interface MessengerUser {
 
-/**
- * The messenger user can be used
- */
-class MessengerUser( val id: String = UUID.randomUUID().toString().substring(0, 7),
-                     val name: String = "",
+    /*
+     * Send a message through the message service to the desired user
+     */
+    fun sendMessage(receiverId:String, message: String)
 
-                     private val key:String,
-                     private val messageService: MessageService)
-{
-    private val doNotDisturb:Boolean = false
-    private val messages = mutableListOf<String>()
-    private val subscribers = mutableListOf<MessageSubscriber>()
+    /*
+     * This function will be called when the message service sends a message to this user.
+     */
+    fun receiveMessage(message: Message)
 
+    /*
+     * This function is to subscribe for messages that arrive on this user account.
+     */
+    fun subscribeForMessages( subscriber: MessageSubscriber ): Boolean
 
-    fun sendMessage(receiverId:String, message: String){
-        this.messageService.sendMessage(this.id, this.key, receiverId, message )
-    }
+    fun isDisturbable(): Boolean
 
-    fun receiveMessage(message: Message){
-
-    }
-
-    fun subscribeForMessages( subscriber: MessageSubscriber ): Boolean {
-
-        return true
-    }
+    fun validateKey(key: String): Boolean
 }
-
