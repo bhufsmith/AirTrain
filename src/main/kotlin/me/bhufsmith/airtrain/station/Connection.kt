@@ -6,5 +6,5 @@ package me.bhufsmith.airtrain.station
  * destination: The station that is reachable from a given station
  * timeTo: The time in minutes to get from a given station to "destination"
  */
-data class Connection (val destination:Station,
+data class Connection (val destination: StationConnection,
                        val timeTo: Int)

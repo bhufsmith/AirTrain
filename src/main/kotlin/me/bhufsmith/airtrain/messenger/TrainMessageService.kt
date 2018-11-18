@@ -5,7 +5,12 @@ package me.bhufsmith.airtrain.messenger
  *The senderKey should be generated inside the registerUser function so that it can be kept private
  */
 
-interface MessageService {
+interface TrainMessageService {
+
+    /**
+     * Register a new driver (will receive all messages from a standard user)
+     */
+    fun registerDriver(name: String, driverKey:String):SimpleMessengerUser
 
     /**
      * Registers a user with the message service
@@ -18,5 +23,10 @@ interface MessageService {
      * The sender must be validated by the sender key.
      */
     fun sendMessage(senderId:String, senderKey:String, receiverId: String, message: String)
+
+    /**
+     * Retrieve the messenger ID of the current driver
+     */
+    fun retrieveDriverId(): String
 
 }
