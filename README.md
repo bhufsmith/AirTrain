@@ -16,3 +16,44 @@ While the train is in transit,
 Once a driver reaches a station, all pending messages are delivered to them.
 
 Write a program in Java or Kotlin, that simulates a shuttle running for 24 hours with each driver receiving 5 random messages per hour, 2 of which are urgent. Design your solution so it can be easily extended to add additional stations to the route, and the simulation can be completed in a reasonably observable timeframe.
+
+## Build
+
+The program is built using kotlin against java 1.8.
+The build script is gradle. 
+The gradle wrapper has been included so that you will not need to have gradle installed to compile this project. 
+
+In the root directory of the project. 
+
+Linux / MacOS
+``` ./gradlew clean build ```
+
+Windows 
+``` gradlew.sh clean build ```
+
+The build produces a "Fat Jar" containing everything that you need to run the simulator. 
+This can be found in ``` build/libs/AirTrain-1.0-SNAPSHOT.jar ```    
+
+## Run   
+
+You will need java 1.8 or later installed to run ths. 
+To run the project, you can execute the following in the root directory, after build. 
+``` java -jar build/libs/AirTrain-1.0-SNAPSHOT.jar ```
+
+## Modify 
+
+In ``` AirTrain/src/main/kotlin/me/bhufsmith/airtrain/AirTrainSim.kt ``` You will find the main method. 
+
+There will be the following, which starts on line 25   
+```  
+    val route = Route()
+    route.addStation("A", 0.0f, 0.0f)
+    route.addStation("B", 9.0f, 11.0f)
+
+
+    //UNCOMMENT THE FOLLOWING LINE TO ADD ANOTHER STATION
+    //route.addStation("C", 22.5f, 17.5f)
+```
+
+You may uncomment the line, and or add new stations as desired.    
+Then re-build as shown above, and run the program. 
