@@ -44,6 +44,12 @@ To run the project, you can execute the following in the root directory, after b
 
 In ``` AirTrain/src/main/kotlin/me/bhufsmith/airtrain/AirTrainSim.kt ``` You will find the main method. 
 
+There are two areas of interest here.   
+Line 19: ``` val timeHelper = TimeHelper( 0.001f) ```  
+Feel free to modify the argument to TimeHelper to adjust the time scale of the program. 
+
+With the current value, the sim should complete in about 1 min 45 seconds. 
+
 There will be the following, which starts on line 25   
 ```  
     val route = Route()
