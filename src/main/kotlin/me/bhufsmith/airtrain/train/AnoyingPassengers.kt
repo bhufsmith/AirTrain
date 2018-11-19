@@ -1,16 +1,13 @@
 package me.bhufsmith.airtrain.train
 
-import me.bhufsmith.airtrain.messenger.MessengerUser
-import me.bhufsmith.airtrain.messenger.SimpleMessengerUser
-import me.bhufsmith.airtrain.messenger.TrainMessageService
+import me.bhufsmith.airtrain.messenger.*
 import me.bhufsmith.airtrain.time.TimeHelper
 import java.util.*
 
 class AnoyingPassengers(private val messageService: TrainMessageService,
                         private val timeHelper: TimeHelper,
                         private val messagesPerHour:Int = 5,
-                        private val urgenPerHour:Int = 2): Runnable {
-
+                        private val urgenPerHour:Int = 2): Runnable, MessageReceiver {
 
     val anoyingMessages = listOf<String>("Are we there yet!!!", "How much longer till my stop?",
                                         "Do you like driving trains?", "Why is there a squeaking noise in the back?",
@@ -26,24 +23,26 @@ class AnoyingPassengers(private val messageService: TrainMessageService,
                                 "James", "Bill", "Ted", "Brian", "Lauren", "Christen", "Audrey", "Meagan", "Lisa")
 
     private val trainPassengers = mutableListOf<SimpleMessengerUser>()
-
+    private var hourlyUrgent = urgenPerHour
 
     //Register some users.
     private fun registerUsers(){
 
+        trainPassengers.forEach{ it.unsubscribe( this) }
         trainPassengers.clear()
         val userOrder = (0 until passengerNames.size).shuffled()
 
         //Select 5 names to use and register the users.
-        var messengerUser: MessengerUser
+        var messengerUser: SimpleMessengerUser
         for (i in 0 until 5) {
             messengerUser = messageService.registerUser(passengerNames[userOrder[i]])
             trainPassengers.add(messengerUser)
+            messengerUser.subscribeForMessages( this )
         }
     }
 
     private fun sendMessagesForHour(){
-
+        hourlyUrgent = urgenPerHour
         val messageOrder = (0 until anoyingMessages.size).shuffled()
 
         val messageMaxInterval: Int = timeHelper.minPerHour / messagesPerHour
@@ -68,6 +67,18 @@ class AnoyingPassengers(private val messageService: TrainMessageService,
 
         //Wait out the remainder of the hour
         timeHelper.waitFor(timeHelper.minPerHour - minTimeSpent )
+    }
+
+
+    override fun messageArrived(receiverId: String, message: Message) {
+        val sender = trainPassengers.find { it.id == receiverId }
+
+        println("\t - [${timeHelper.currentTime()}: To:${sender?.name}  From:${message.senderName}]: ${message.message}")
+
+        if( message.senderName == "AUTO_REPLY" && hourlyUrgent > 0 ){
+            sender?.sendMessage("urgent")
+            hourlyUrgent--
+        }
     }
 
     override fun run() {

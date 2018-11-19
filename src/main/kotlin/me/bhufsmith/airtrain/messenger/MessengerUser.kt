@@ -1,16 +1,13 @@
 package me.bhufsmith.airtrain.messenger
 
-interface MessengerUser {
+interface MessengerUser: MessageReceiver {
 
+    val id:String
+    val name:String
     /*
      * Send a message through the message service to the desired user
      */
     fun sendMessage(message: String)
-
-    /*
-     * This function will be called when the message service sends a message to this user.
-     */
-    fun receiveMessage(message: Message)
 
     fun isDisturbable(): Boolean
 

@@ -10,7 +10,12 @@ interface TrainMessageService {
     /**
      * Register a new driver (will receive all messages from a standard user)
      */
-    fun registerDriver(name: String, driverKey:String):SimpleMessengerUser
+    fun registerDriver(name: String, driverKey:String):SimpleDriverMessengerUser
+
+    /**
+     * Activate a driver to receive customer messages.
+     */
+    fun setCurrentDriver( driver: SimpleDriverMessengerUser )
 
     /**
      * Registers a user with the message service
@@ -28,5 +33,10 @@ interface TrainMessageService {
      * Retrieve the messenger ID of the current driver
      */
     fun retrieveDriverId(): String
+
+    /**
+     * retrieve all pending messages
+     */
+    fun sendPendingMessages(userId:String, userKey:String)
 
 }

@@ -113,6 +113,18 @@ class Route (){
         this.currentStation = rootStation
     }
 
+    fun stationList():List<String>{
+        var station:StationNode = rootStation
+        val stations = mutableListOf<String>()
+
+        while(station.nextStation != null){
+            station = station.nextStation!!
+            stations.add( station.name )
+        }
+
+        return stations
+    }
+
     /**
      * This class describes a station by name, and it's connecting stations.
      *

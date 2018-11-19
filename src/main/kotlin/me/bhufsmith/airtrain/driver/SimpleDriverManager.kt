@@ -1,15 +1,20 @@
 package me.bhufsmith.airtrain.driver
 
+import me.bhufsmith.airtrain.messenger.TrainMessageService
 import me.bhufsmith.airtrain.time.TimeHelper
 
-class SimpleDriverManager(private val timeHelper: TimeHelper): DriverManager {
+class SimpleDriverManager(private val timeHelper: TimeHelper,
+                          private val messageService: TrainMessageService,
+                          private val driverKey:String): DriverManager {
 
     private val MAX_DRIVE_MIN = (8 * 60).toFloat()
     private val drivers = mutableMapOf<Int, DriverDetail>()
     private var driverId = 0
 
     override fun registerDriver(name: String, location: String) {
-        val driver = Driver( driverId++, name )
+        val driverMessenger = messageService.registerDriver(name, driverKey)
+        val driver = Driver( driverId++, name, driverMessenger )
+
         val driverDetail = DriverDetail( driver, location, DriverStatus.WAITING, -1.0f)
 
         synchronized(this.drivers) {
@@ -41,6 +46,7 @@ class SimpleDriverManager(private val timeHelper: TimeHelper): DriverManager {
 
             if (driverDetail != null) {
                 driverDetail.driverStatus = DriverStatus.OFF
+                println("[Drive-Time: ${timeHelper.currentTime() - driverDetail.shiftStart}]" )
             } else {
                 throw InvalidDriverException("Can not return invalid driver to station.")
             }
@@ -56,6 +62,7 @@ class SimpleDriverManager(private val timeHelper: TimeHelper): DriverManager {
             if (driverDetail != null ) {
                 driverDetail.driverStatus = DriverStatus.DRIVING
                 driverDetail.shiftStart = timeHelper.currentTime()
+                messageService.setCurrentDriver( driverDetail.driver.messenger )
 
             } else {
                 throw InvalidDriverException("Invalid driver, or driver is off.")
@@ -76,9 +83,11 @@ class SimpleDriverManager(private val timeHelper: TimeHelper): DriverManager {
             if (driverDetail != null ) {
                 driverDetail.shiftStart = timeHelper.currentTime()
                 driverDetail.driverStatus = DriverStatus.DRIVING
+                messageService.setCurrentDriver( driverDetail.driver.messenger )
             } else {
                 throw InvalidDriverException("No Driver to pick up.")
             }
+
             return driverDetail.driver
         }
     }
@@ -89,7 +98,7 @@ class SimpleDriverManager(private val timeHelper: TimeHelper): DriverManager {
             val driverDetail = this.drivers[ driver.driverId ]
 
             if(driverDetail !=null ){
-                return (timeHelper.currentTime() - driverDetail.shiftStart) <= ( MAX_DRIVE_MIN + moreMin)
+                return (timeHelper.currentTime() - driverDetail.shiftStart + moreMin ) <= MAX_DRIVE_MIN
             }
         }
         return false
