@@ -29,7 +29,7 @@ Linux / MacOS
 ``` ./gradlew clean build ```
 
 Windows 
-``` gradlew.sh clean build ```
+``` gradlew.bat clean build ```
 
 The build produces a "Fat Jar" containing everything that you need to run the simulator. 
 This can be found in ``` build/libs/AirTrain-1.0-SNAPSHOT.jar ```    
